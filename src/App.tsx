@@ -801,13 +801,13 @@ export default function App() {
               id="modal-title"
               style={{ fontWeight: "bold" }}
             >
-              草刈り確認
+              ちょっと待って！
             </h3>
             <div style={{ marginTop: "0.5rem" }}>
               <p>
-                本当にお花畑をリセットしますか？
+                本当にお花畑をリセットする？
                 <br />
-                咲いているお花がすべて消えてしまいます。
+                咲かせたマッチョ・フラワーが全部消えちゃうよ！
               </p>
             </div>
             <div style={{ marginTop: "1.5rem", display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
@@ -823,7 +823,7 @@ export default function App() {
                 onClick={handleConfirmClear}
                 style={{ padding: "0.5rem 1rem", backgroundColor: "#DC2626", color: "white" }}
               >
-                はい、草刈りする
+                草刈りする!
               </button>
             </div>
           </div>
