@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { v4 as uuid } from "uuid";
+// twMergeは、動的にclassNameを結合するのに便利なライブラリです
 import { twMerge } from "tailwind-merge";
 
-// --- 型定義 ---
+// --- 型定義 (ここがTypeScriptの部分です) ---
 type Todo = {
   id: string;
   name: string;
@@ -56,7 +57,7 @@ const initTodos: Todo[] = [
   },
 ];
 
-// --- 挨拶コンポーネント ---
+// --- 挨拶コンポーネント (Propsの型定義がTypeScript) ---
 type WelcomeMessageProps = {
   uncompletedCount: number;
 };
@@ -76,13 +77,11 @@ const WelcomeMessage = ({ uncompletedCount }: WelcomeMessageProps) => {
   }
 
   return (
-    <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+    <div className="text-center mb-4">
       {greeting}！
       <br />
       現在の未完了メニューは
-      <span style={{ fontWeight: "bold", margin: "0 0.25rem" }}>
-        {uncompletedCount}
-      </span>
+      <span className="font-bold mx-1">{uncompletedCount}</span>
       個です。
     </div>
   );
@@ -90,12 +89,12 @@ const WelcomeMessage = ({ uncompletedCount }: WelcomeMessageProps) => {
 
 // --- お花畑エリア ---
 const FLOWER_COLORS = [
-  "#F87171",
-  "#FBBF24",
-  "#34D399",
-  "#60A5FA",
-  "#EC4899",
-  "#A78BFA",
+  "#F87171", // red-400
+  "#FBBF24", // amber-400
+  "#34D399", // emerald-400
+  "#60A5FA", // blue-400
+  "#EC4899", // pink-500
+  "#A78BFA", // violet-400
 ];
 
 type FlowerVectorProps = {
@@ -120,16 +119,19 @@ type FlowerItemProps = {
   flower: Flower;
 };
 const FlowerItem = React.memo(({ flower }: FlowerItemProps) => {
+  // 座標 (x, y) やランダムな回転は、Tailwindでは表現しきれないため style属性 を使います。
   const style: React.CSSProperties = {
-    position: "absolute",
     left: `${flower.x}%`,
     top: `${flower.y}%`,
-    opacity: 0.9,
     transform: `rotate(${Math.random() * 30 - 15}deg)`,
   };
 
   return (
-    <div style={style} title={`サイズ: ${flower.size.toFixed(0)}px`}>
+    <div
+      className="absolute opacity-90"
+      style={style}
+      title={`サイズ: ${flower.size.toFixed(0)}px`}
+    >
       <FlowerVector fill={flower.color} size={flower.size} />
     </div>
   );
@@ -142,46 +144,22 @@ type FlowerGardenProps = {
 const FlowerGarden = React.memo(
   ({ flowers, onClearRequest }: FlowerGardenProps) => {
     return (
-      <div style={{ marginTop: "1.25rem" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-            marginBottom: "0.25rem",
-          }}
-        >
-          <h2>トレーニング・ガーデン</h2>
+      <div className="mt-5">
+        <div className="flex items-center justify-center relative mb-1">
+          <h2 className="text-lg font-semibold">トレーニング・ガーデン</h2>
           {flowers.length > 0 && (
             <button
               onClick={onClearRequest}
-              style={{ position: "absolute", right: 0, top: 0 }}
+              className="absolute right-0 top-0 p-1 text-gray-500 hover:text-red-500"
               title="草刈り (お花畑をリセット)"
             >
-              <ScissorsIcon style={{ width: "1.25rem", height: "1.25rem" }} />
+              <ScissorsIcon className="w-5 h-5" />
             </button>
           )}
         </div>
-        <div
-          style={{
-            position: "relative",
-            height: "16rem",
-            width: "100%",
-            overflow: "hidden",
-            border: "2px dashed #9AE6B4",
-            padding: "0.5rem",
-          }}
-        >
+        <div className="relative h-64 w-full overflow-hidden border-2 border-dashed border-green-300 p-2 rounded-md">
           {flowers.length === 0 && (
-            <div
-              style={{
-                display: "flex",
-                height: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <div className="flex h-full items-center justify-center text-gray-500">
               メニューを完了させて花を咲かせよう！
             </div>
           )}
@@ -194,7 +172,7 @@ const FlowerGarden = React.memo(
   }
 );
 
-// --- アイコン ---
+// --- アイコン (Propsの型定義がTypeScript) ---
 const TrashIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -272,25 +250,8 @@ type TodoItemProps = {
 };
 const TodoItem = ({ todo, updateIsDone, remove }: TodoItemProps) => {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "1rem",
-        border: "1px solid #EEE",
-        marginBottom: "0.5rem",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          gap: "0.5rem 1rem",
-          overflow: "hidden",
-        }}
-      >
+    <div className="flex items-center justify-between p-4 border border-gray-200 rounded-md">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 overflow-hidden">
         <input
           type="checkbox"
           checked={todo.isDone}
@@ -303,26 +264,32 @@ const TodoItem = ({ todo, updateIsDone, remove }: TodoItemProps) => {
               todo.unit
             )
           }
-          style={{ marginRight: "0.75rem", height: "1.5rem", width: "1.5rem" }}
+          className="mr-3 h-6 w-6 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-        <div style={{ flex: "1 1 0%", minWidth: 0 }}>
+        <div className="flex-1 min-w-0">
           <span
-            style={{
-              textDecoration: todo.isDone ? "line-through" : "none",
-              color: todo.isDone ? "#9CA3AF" : "#1F2937",
-            }}
+            className={twMerge(
+              "text-lg", // 基本のスタイル
+              todo.isDone
+                ? "line-through text-gray-400" // 完了時のスタイル
+                : "text-gray-900" // 未完了時のスタイル
+            )}
           >
             {todo.name}
           </span>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div className="flex items-center gap-3 text-sm text-gray-600">
             <span>{todo.amount}</span>
             <span>{todo.sets}</span>
           </div>
         </div>
       </div>
       <div>
-        <button onClick={() => remove(todo.id)} aria-label="削除">
-          <TrashIcon style={{ width: "1.25rem", height: "1.25rem" }} />
+        <button
+          onClick={() => remove(todo.id)}
+          aria-label="削除"
+          className="p-1 text-gray-500 hover:text-red-600"
+        >
+          <TrashIcon className="w-5 h-5" />
         </button>
       </div>
     </div>
@@ -343,7 +310,7 @@ type TodoListProps = {
 const TodoList = ({ todos, updateIsDone, remove }: TodoListProps) => {
   if (todos.length === 0) {
     return (
-      <div style={{ textAlign: "center", padding: "1rem" }}>
+      <div className="text-center p-4 text-gray-500">
         現在、登録されているメニューはありません。
       </div>
     );
@@ -353,7 +320,7 @@ const TodoList = ({ todos, updateIsDone, remove }: TodoListProps) => {
     return a.isDone ? 1 : -1;
   });
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+    <div className="flex flex-col gap-3">
       {sortedTodos.map((todo) => (
         <TodoItem
           key={todo.id}
@@ -368,6 +335,7 @@ const TodoList = ({ todos, updateIsDone, remove }: TodoListProps) => {
 
 // --- メインの App コンポーネント ---
 export default function App() {
+  // useState の型定義 (ここがTypeScript)
   const [todos, setTodos] = useState<Todo[]>([]);
   const [flowers, setFlowers] = useState<Flower[]>([]);
   const [newTodoName, setNewTodoName] = useState("");
@@ -425,21 +393,24 @@ export default function App() {
     }
 
     setInitialized(true);
-  }, []);
+  }, []); // [] は「最初の一回だけ実行する」という意味
 
   // --- LocalStorage (保存) ---
+  // todos が変更されるたびに実行
   useEffect(() => {
     if (initialized) {
       localStorage.setItem(todoLocalStorageKey, JSON.stringify(todos));
     }
   }, [todos, initialized]);
 
+  // flowers が変更されるたびに実行
   useEffect(() => {
     if (initialized) {
       localStorage.setItem(flowerLocalStorageKey, JSON.stringify(flowers));
     }
   }, [flowers, initialized]);
 
+  // todaysWeight が変更されるたびに実行
   useEffect(() => {
     if (initialized) {
       const todayString = new Date().toISOString().split("T")[0];
@@ -539,7 +510,7 @@ export default function App() {
     setIsModalOpen(false);
   };
 
-  // --- フォーム操作 ---
+  // --- フォーム操作 (イベントハンドラの型定義がTypeScript) ---
   const isValidTodoName = (name: string): string => {
     if (name.length < 2 || name.length > 32) {
       return "2〜32文字で入力してください";
@@ -570,6 +541,7 @@ export default function App() {
       setNewTodoNameError(err);
       return;
     }
+    // newTodo に 型 'Todo' を指定 (ここがTypeScript)
     const newTodo: Todo = {
       id: uuid(),
       name: newTodoName,
@@ -586,49 +558,41 @@ export default function App() {
     setNewTodoNameError("");
   };
 
-  // --- JSX ---
+  // --- JSX (TSX) ---
   return (
-    <div style={{ maxWidth: "48rem", margin: "2.5rem auto", padding: "1rem" }}>
-      <h1 style={{ textAlign: "center", fontSize: "1.875rem", fontWeight: "bold", marginBottom: "1rem" }}>
-        筋トレお花畑
-      </h1>
+    <div className="max-w-3xl mx-auto p-4 my-10">
+      <h1 className="text-center text-3xl font-bold mb-4">筋トレお花畑</h1>
 
       <WelcomeMessage uncompletedCount={uncompletedCount} />
 
       <FlowerGarden flowers={flowers} onClearRequest={handleClearRequest} />
 
       {/* 今日の体重 */}
-      <div style={{ marginTop: "1.5rem", border: "1px solid #CCC", padding: "1.25rem" }}>
-        <label
-          htmlFor="todaysWeight"
-          style={{ display: "block", fontWeight: "bold" }}
-        >
+      <div className="mt-6 border border-gray-300 rounded-lg p-5">
+        <label htmlFor="todaysWeight" className="block font-bold text-gray-700">
           今日の体重
         </label>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <div className="flex items-center gap-2 mt-1">
           <input
             id="todaysWeight"
             type="number"
             value={todaysWeight}
             onChange={handleWeightChange}
-            style={{ width: "100%", border: "1px solid #CCC", padding: "0.625rem" }}
+            className="w-full border border-gray-300 p-2.5 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="例: 65.5"
             min="0"
             step="0.1"
           />
-          <span>kg</span>
+          <span className="text-gray-700">kg</span>
         </div>
       </div>
       {/* 体重ここまで */}
 
-      <div style={{ marginTop: "1.5rem", border: "1px solid #CCC", padding: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <h2>新しいメニューの追加</h2>
+      <div className="mt-6 border border-gray-300 rounded-lg p-5 flex flex-col gap-4">
+        <h2 className="text-xl font-semibold">新しいメニューの追加</h2>
 
         <div>
-          <label
-            htmlFor="newTodoName"
-            style={{ display: "block", marginBottom: "0.25rem" }}
-          >
+          <label htmlFor="newTodoName" className="block mb-1 text-gray-700">
             メニュー名
           </label>
           <input
@@ -636,56 +600,52 @@ export default function App() {
             type="text"
             value={newTodoName}
             onChange={updateNewTodoName}
-            style={{ width: "100%", border: "1px solid #CCC", padding: "0.625rem" }}
+            className="w-full border border-gray-300 p-2.5 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="例: 腕立て (2〜32文字)"
           />
           {newTodoNameError && (
-            <div style={{ marginTop: "0.25rem", color: "red", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-              <AlertIcon style={{ width: "1rem", height: "1rem" }} />
+            <div className="mt-1 text-red-600 flex items-center gap-1 text-sm">
+              <AlertIcon className="w-4 h-4" />
               <div>{newTodoNameError}</div>
             </div>
           )}
         </div>
 
         <div>
-          <label style={{ display: "block", marginBottom: "0.375rem" }}>
-            単位
-          </label>
-          <div style={{ display: "flex", width: "100%", backgroundColor: "#EEE", padding: "0.25rem" }}>
+          <label className="block mb-1.5 text-gray-700">単位</label>
+          <div className="flex w-full bg-gray-200 p-1 rounded-md">
             <button
               type="button"
               onClick={() => setNewTodoUnit("reps")}
-              style={{
-                width: "50%",
-                padding: "0.375rem",
-                textAlign: "center",
-                backgroundColor: newTodoUnit === "reps" ? "white" : "transparent",
-                border: newTodoUnit === "reps" ? "1px solid #CCC" : "none",
-              }}
+              className={twMerge(
+                "w-1/2 py-1.5 text-center rounded-md transition-all",
+                newTodoUnit === "reps"
+                  ? "bg-white border border-gray-300 shadow-sm" // 選択時
+                  : "bg-transparent border-none text-gray-600 hover:bg-gray-300" // 非選択時
+              )}
             >
               回数 (回)
             </button>
             <button
               type="button"
               onClick={() => setNewTodoUnit("seconds")}
-              style={{
-                width: "50%",
-                padding: "0.375rem",
-                textAlign: "center",
-                backgroundColor: newTodoUnit === "seconds" ? "white" : "transparent",
-                border: newTodoUnit === "seconds" ? "1px solid #CCC" : "none",
-              }}
+              className={twMerge(
+                "w-1/2 py-1.5 text-center rounded-md transition-all",
+                newTodoUnit === "seconds"
+                  ? "bg-white border border-gray-300 shadow-sm" // 選択時
+                  : "bg-transparent border-none text-gray-600 hover:bg-gray-300" // 非選択時
+              )}
             >
               耐久 (秒)
             </button>
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem" }}>
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label
               htmlFor="newTodoAmount"
-              style={{ display: "block", marginBottom: "0.25rem" }}
+              className="block mb-1 text-gray-700"
             >
               {newTodoUnit === "reps" ? "回数" : "秒数"}
             </label>
@@ -694,7 +654,7 @@ export default function App() {
               type="number"
               value={newTodoAmount}
               onChange={updateNewTodoAmount}
-              style={{ width: "100%", border: "1px solid #CCC", padding: "0.625rem" }}
+              className="w-full border border-gray-300 p-2.5 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder={newTodoUnit === "reps" ? "例: 10" : "例: 30"}
               min="0"
               step="10"
@@ -702,17 +662,14 @@ export default function App() {
           </div>
 
           <div>
-            <label
-              htmlFor="newTodoSets"
-              style={{ display: "block", marginBottom: "0.25rem" }}
-            >
+            <label htmlFor="newTodoSets" className="block mb-1 text-gray-700">
               セット数
             </label>
             <select
               id="newTodoSets"
               value={newTodoSets}
               onChange={updateNewTodoSets}
-              style={{ width: "100%", border: "1px solid #CCC", padding: "0.625rem", background: "white" }}
+              className="w-full border border-gray-300 p-2.5 rounded-md bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
                 <option key={num} value={num.toString()}>
@@ -727,26 +684,15 @@ export default function App() {
           type="button"
           onClick={addNewTodo}
           disabled={!!newTodoNameError || newTodoName.length === 0}
-          style={{
-            display: "flex",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            padding: "0.75rem",
-            color: "white",
-            backgroundColor: "#059669",
-            opacity: (!!newTodoNameError || newTodoName.length === 0) ? 0.4 : 1,
-            cursor: (!!newTodoNameError || newTodoName.length === 0) ? "not-allowed" : "pointer",
-          }}
+          className="flex w-full items-center justify-center gap-2 p-3 text-white bg-green-600 rounded-md font-semibold hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <PlusIcon style={{ width: "1.25rem", height: "1.25rem" }} />
+          <PlusIcon className="w-5 h-5" />
           メニューを追加
         </button>
       </div>
 
-      <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-        <h2>
+      <div className="mt-6 flex flex-col gap-2">
+        <h2 className="text-xl font-semibold">
           メニューリスト ({todos.length}件)
         </h2>
         <TodoList
@@ -756,23 +702,14 @@ export default function App() {
         />
       </div>
 
-      <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className="mt-6 flex flex-col gap-4">
         {todos.some((todo) => todo.isDone) && (
           <button
             type="button"
             onClick={removeCompletedTodos}
-            style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.5rem",
-              padding: "0.625rem",
-              color: "white",
-              backgroundColor: "#DC2626",
-            }}
+            className="flex w-full items-center justify-center gap-2 p-2.5 text-white bg-red-600 rounded-md hover:bg-red-700"
           >
-            <TrashIcon style={{ width: "1.25rem", height: "1.25rem" }} />
+            <TrashIcon className="w-5 h-5" />
             完了済みのメニューをすべて削除
           </button>
         )}
@@ -780,48 +717,34 @@ export default function App() {
 
       {isModalOpen && (
         <div
-          style={{
-            position: "fixed",
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-            zIndex: 50,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.6)",
-          }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
           aria-labelledby="modal-title"
           role="dialog"
           aria-modal="true"
         >
-          <div style={{ backgroundColor: "white", padding: "1.5rem", margin: "1rem", maxWidth: "24rem", width: "100%" }}>
-            <h3
-              id="modal-title"
-              style={{ fontWeight: "bold" }}
-            >
+          <div className="bg-white p-6 m-4 max-w-sm w-full rounded-lg shadow-xl">
+            <h3 id="modal-title" className="font-bold text-lg">
               ちょっと待って！
             </h3>
-            <div style={{ marginTop: "0.5rem" }}>
-              <p>
+            <div className="mt-2">
+              <p className="text-sm text-gray-700">
                 本当にお花畑をリセットする？
                 <br />
                 咲かせたマッチョ・フラワーが全部消えちゃうよ！
               </p>
             </div>
-            <div style={{ marginTop: "1.5rem", display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+            <div className="mt-6 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={handleCancelClear}
-                style={{ padding: "0.5rem 1rem", backgroundColor: "#F3F4F6" }}
+                className="py-2 px-4 bg-gray-100 rounded-md hover:bg-gray-200"
               >
                 キャンセル
               </button>
               <button
                 type="button"
                 onClick={handleConfirmClear}
-                style={{ padding: "0.5rem 1rem", backgroundColor: "#DC2626", color: "white" }}
+                className="py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700"
               >
                 草刈りする!
               </button>
