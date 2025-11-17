@@ -32,14 +32,6 @@ const initTodos: Todo[] = [
   },
   {
     id: uuid(),
-    name: "腕立て",
-    isDone: false,
-    amount: "15回",
-    unit: "reps",
-    sets: "3セット",
-  },
-  {
-    id: uuid(),
     name: "腹筋",
     isDone: false,
     amount: "20回",
@@ -119,9 +111,8 @@ const FlowerGarden = React.memo(({ flowers, onClearRequest }: FlowerGardenProps)
           <button
             onClick={onClearRequest}
             className="absolute right-0 top-0 text-blue-600 hover:text-blue-800 p-1 rounded-full transition-colors"
-            title="草刈り (お花畑をリセット)"
+            title="草刈り"
           >
-            {/* ◀◀ 変更: ここからアイコン差し替え */}
             <ScissorsIcon className="w-5 h-5" />
           </button>
         )}
@@ -129,7 +120,7 @@ const FlowerGarden = React.memo(({ flowers, onClearRequest }: FlowerGardenProps)
       <div className="relative h-64 w-full overflow-hidden rounded-lg border-2 border-dashed border-green-300 bg-green-50 p-2 shadow-inner">
         {flowers.length === 0 && (
           <div className="flex h-full items-center justify-center text-gray-500">
-            メニューを完了させて花を咲かせよう！
+            メニューを完了させてお花畑をつくろう！
           </div>
         )}
         {flowers.map((flower) => (
@@ -188,7 +179,6 @@ const ScissorsIcon = (props: React.SVGProps<SVGSVGElement>) => (
     fill="currentColor"
     {...props}
   >
-    {/* ユーザー指定のSVGパス (4つ) */}
     <path d="M211.875,291.59l-8.506-13.629c-0.014,0.024-0.025,0.043-0.041,0.063l-0.094-0.149 c-9.273,14.539-15.207,23.981-15.207,23.981c-44.285,70.437-97.008,194.101-74.949,207.886l1.504,1.004 c3.342,2.09,7.353,1.504,9.107-1.336l112.549-179.144l-4.26-6.77L211.875,291.59z" />
     <path d="M437.191,10.833c-37.35-23.48-89.822-7.52-116.978,35.594c-10.443,16.711-15.625,35.008-15.791,52.641 c-0.168,12.367-3.928,24.312-10.445,34.676c-4.93,7.856-11.281,17.797-18.215,28.91c0.668,1.086,1.42,2.172,2.088,3.258 l16.963,26.988c4.93,7.856,9.942,15.711,14.705,23.398c18.299-21.808,44.451-36.348,73.279-38.437 c27.572-2.004,55.562-18.465,72.943-46.203C482.812,88.54,474.457,34.313,437.191,10.833z M423.07,111.102 c-14.623,23.308-42.279,32.332-61.664,20.218c-19.301-12.199-23.144-41.027-8.523-64.34c14.623-23.308,42.363-32.336,61.664-20.219 c4.832,3.039,8.696,7.117,11.549,11.883c0.025,0.039,0.047,0.086,0.072,0.129c1.381,2.324,2.516,4.813,3.412,7.426 c0.037,0.106,0.068,0.219,0.106,0.324C434.171,79.966,432.218,96.598,423.07,111.102z" />
     <path d="M213.094,262.082l0.668,1.004l-0.5-1.172C213.261,262,213.177,262,213.094,262.082z" />
@@ -375,7 +365,7 @@ export default function App() {
 
   const uncompletedCount = todos.filter((todo) => !todo.isDone).length;
 
-  // --- 花を追加するロジック ---
+  // 花を追加するロジック
   const addNewFlower = (
     amountStr: string,
     setsStr: string,
@@ -447,7 +437,7 @@ export default function App() {
     setTodos(todos.filter((todo) => !todo.isDone));
   };
 
-  // ◀◀ 変更: 花をすべて削除する (草刈り)
+  // 花をすべて削除する
   const clearAllFlowers = () => {
     setFlowers([]);
   };
