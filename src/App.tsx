@@ -7,15 +7,15 @@ type Todo = {
   id: string;
   name: string;
   isDone: boolean;
-  amount: string; // 例: "10回" または "30秒"
+  amount: string;
   unit: "reps" | "seconds";
-  sets: string; // 例: "3セット"
+  sets: string;
 };
 
 type Flower = {
   id: string;
   size: number;
-  color: string; // 咲く花の色
+  color: string;
   x: number;
   y: number;
 };
@@ -27,6 +27,14 @@ const initTodos: Todo[] = [
     name: "スクワット",
     isDone: false,
     amount: "20回",
+    unit: "reps",
+    sets: "3セット",
+  },
+  {
+    id: uuid(),
+    name: "腕立て",
+    isDone: false,
+    amount: "15回",
     unit: "reps",
     sets: "3セット",
   },
@@ -48,15 +56,46 @@ const initTodos: Todo[] = [
   },
 ];
 
-// --- お花畑エリア ---
+// --- 挨拶コンポーネント ---
+type WelcomeMessageProps = {
+  uncompletedCount: number;
+};
+const WelcomeMessage = ({ uncompletedCount }: WelcomeMessageProps) => {
+  const currentTime = new Date();
+  const hours = currentTime.getHours();
+  let greeting: string;
 
+  if (hours < 5) {
+    greeting = "こんばんは";
+  } else if (hours < 12) {
+    greeting = "おはようございます";
+  } else if (hours < 18) {
+    greeting = "こんにちは";
+  } else {
+    greeting = "こんばんは";
+  }
+
+  return (
+    <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+      {greeting}！
+      <br />
+      現在の未完了メニューは
+      <span style={{ fontWeight: "bold", margin: "0 0.25rem" }}>
+        {uncompletedCount}
+      </span>
+      個です。
+    </div>
+  );
+};
+
+// --- お花畑エリア ---
 const FLOWER_COLORS = [
-  "#F87171", // red-500
-  "#FBBF24", // amber-400
-  "#34D399", // emerald-400
-  "#60A5FA", // blue-400
-  "#EC4899", // pink-500
-  "#A78BFA", // violet-400
+  "#F87171",
+  "#FBBF24",
+  "#34D399",
+  "#60A5FA",
+  "#EC4899",
+  "#A78BFA",
 ];
 
 type FlowerVectorProps = {
@@ -100,36 +139,60 @@ type FlowerGardenProps = {
   flowers: Flower[];
   onClearRequest: () => void;
 };
-const FlowerGarden = React.memo(({ flowers, onClearRequest }: FlowerGardenProps) => {
-  return (
-    <div className="mt-5">
-      <div className="flex items-center justify-center relative mb-1">
-        <h2 className="text-lg font-bold text-center text-green-700">
-          トレーニング・ガーデン
-        </h2>
-        {flowers.length > 0 && (
-          <button
-            onClick={onClearRequest}
-            className="absolute right-0 top-0 text-blue-600 hover:text-blue-800 p-1 rounded-full transition-colors"
-            title="草刈り"
-          >
-            <ScissorsIcon className="w-5 h-5" />
-          </button>
-        )}
+const FlowerGarden = React.memo(
+  ({ flowers, onClearRequest }: FlowerGardenProps) => {
+    return (
+      <div style={{ marginTop: "1.25rem" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            marginBottom: "0.25rem",
+          }}
+        >
+          <h2>トレーニング・ガーデン</h2>
+          {flowers.length > 0 && (
+            <button
+              onClick={onClearRequest}
+              style={{ position: "absolute", right: 0, top: 0 }}
+              title="草刈り (お花畑をリセット)"
+            >
+              <ScissorsIcon style={{ width: "1.25rem", height: "1.25rem" }} />
+            </button>
+          )}
+        </div>
+        <div
+          style={{
+            position: "relative",
+            height: "16rem",
+            width: "100%",
+            overflow: "hidden",
+            border: "2px dashed #9AE6B4",
+            padding: "0.5rem",
+          }}
+        >
+          {flowers.length === 0 && (
+            <div
+              style={{
+                display: "flex",
+                height: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              メニューを完了させて花を咲かせよう！
+            </div>
+          )}
+          {flowers.map((flower) => (
+            <FlowerItem key={flower.id} flower={flower} />
+          ))}
+        </div>
       </div>
-      <div className="relative h-64 w-full overflow-hidden rounded-lg border-2 border-dashed border-green-300 bg-green-50 p-2 shadow-inner">
-        {flowers.length === 0 && (
-          <div className="flex h-full items-center justify-center text-gray-500">
-            メニューを完了させてお花畑をつくろう！
-          </div>
-        )}
-        {flowers.map((flower) => (
-          <FlowerItem key={flower.id} flower={flower} />
-        ))}
-      </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 // --- アイコン ---
 const TrashIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -171,11 +234,10 @@ const AlertIcon = (props: React.SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-// ◀◀ 変更: 新しいSVGパスデータに差し替え
 const ScissorsIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 512 512" // ◀◀ 変更: viewBoxを調整
+    viewBox="0 0 512 512"
     fill="currentColor"
     {...props}
   >
@@ -192,7 +254,7 @@ const parseNumber = (text: string): number => {
   const match = text.match(/(\d+)/);
   if (match && match[1]) {
     const num = parseInt(match[1], 10);
-    return isNaN(num) ? 1 : num; // ◀◀ 修正: 「1」を返すバグを修正
+    return isNaN(num) ? 1 : num;
   }
   return 1;
 };
@@ -210,8 +272,25 @@ type TodoItemProps = {
 };
 const TodoItem = ({ todo, updateIsDone, remove }: TodoItemProps) => {
   return (
-    <div className="flex items-center justify-between p-4 bg-white rounded-xl shadow-md">
-      <div className="flex flex-wrap items-center gap-y-2 gap-x-4 overflow-hidden">
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "1rem",
+        border: "1px solid #EEE",
+        marginBottom: "0.5rem",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          gap: "0.5rem 1rem",
+          overflow: "hidden",
+        }}
+      >
         <input
           type="checkbox"
           checked={todo.isDone}
@@ -224,48 +303,26 @@ const TodoItem = ({ todo, updateIsDone, remove }: TodoItemProps) => {
               todo.unit
             )
           }
-          className="mr-3 h-6 w-6 cursor-pointer text-green-600 focus:ring-green-500 border-gray-300 rounded"
+          style={{ marginRight: "0.75rem", height: "1.5rem", width: "1.5rem" }}
         />
-        <div className="flex-1 min-w-0">
+        <div style={{ flex: "1 1 0%", minWidth: 0 }}>
           <span
-            className={twMerge(
-              "text-lg font-medium text-gray-800",
-              todo.isDone && "line-through text-gray-400"
-            )}
+            style={{
+              textDecoration: todo.isDone ? "line-through" : "none",
+              color: todo.isDone ? "#9CA3AF" : "#1F2937",
+            }}
           >
             {todo.name}
           </span>
-          <div className="flex items-center gap-x-3 text-sm">
-            <span
-              className={twMerge(
-                "font-medium",
-                todo.isDone
-                  ? "text-gray-400"
-                  : todo.unit === "reps"
-                  ? "text-sky-600"
-                  : "text-amber-600"
-              )}
-            >
-              {todo.amount}
-            </span>
-            <span
-              className={twMerge(
-                "font-medium",
-                todo.isDone ? "text-gray-400" : "text-red-600"
-              )}
-            >
-              {todo.sets}
-            </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span>{todo.amount}</span>
+            <span>{todo.sets}</span>
           </div>
         </div>
       </div>
       <div>
-        <button
-          onClick={() => remove(todo.id)}
-          className="rounded-full p-2 text-gray-400 hover:bg-red-100 hover:text-red-600 transition-colors"
-          aria-label="削除"
-        >
-          <TrashIcon className="w-5 h-5" />
+        <button onClick={() => remove(todo.id)} aria-label="削除">
+          <TrashIcon style={{ width: "1.25rem", height: "1.25rem" }} />
         </button>
       </div>
     </div>
@@ -286,7 +343,7 @@ type TodoListProps = {
 const TodoList = ({ todos, updateIsDone, remove }: TodoListProps) => {
   if (todos.length === 0) {
     return (
-      <div className="text-center text-gray-500 p-4 bg-gray-100 rounded-md">
+      <div style={{ textAlign: "center", padding: "1rem" }}>
         現在、登録されているメニューはありません。
       </div>
     );
@@ -296,7 +353,7 @@ const TodoList = ({ todos, updateIsDone, remove }: TodoListProps) => {
     return a.isDone ? 1 : -1;
   });
   return (
-    <div className="space-y-3">
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
       {sortedTodos.map((todo) => (
         <TodoItem
           key={todo.id}
@@ -319,14 +376,16 @@ export default function App() {
   const [newTodoSets, setNewTodoSets] = useState("3");
   const [newTodoNameError, setNewTodoNameError] = useState("");
   const [initialized, setInitialized] = useState(false);
-  // ◀◀ 追加: モーダルの表示状態
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [todaysWeight, setTodaysWeight] = useState("");
 
   const todoLocalStorageKey = "KintoreTodoV3";
   const flowerLocalStorageKey = "KintoreFlowerV3";
+  const weightLocalStorageKey = "KintoreWeightV3";
 
   // --- LocalStorage (初回) ---
   useEffect(() => {
+    // Todoの復元
     try {
       const todoJsonStr = localStorage.getItem(todoLocalStorageKey);
       if (todoJsonStr && todoJsonStr !== "[]") {
@@ -338,6 +397,7 @@ export default function App() {
       console.error("Todoの復元に失敗:", e);
       setTodos(initTodos);
     }
+    // 花の復元
     try {
       const flowerJsonStr = localStorage.getItem(flowerLocalStorageKey);
       if (flowerJsonStr && flowerJsonStr !== "[]") {
@@ -347,6 +407,23 @@ export default function App() {
       console.error("花の復元に失敗:", e);
       setFlowers([]);
     }
+    // 体重の読み込み
+    try {
+      const weightJsonStr = localStorage.getItem(weightLocalStorageKey);
+      if (weightJsonStr) {
+        const savedWeightData = JSON.parse(weightJsonStr);
+        const todayString = new Date().toISOString().split("T")[0];
+        if (savedWeightData.date === todayString) {
+          setTodaysWeight(savedWeightData.weight);
+        } else {
+          setTodaysWeight("");
+        }
+      }
+    } catch (e) {
+      console.error("体重の復元に失敗:", e);
+      setTodaysWeight("");
+    }
+
     setInitialized(true);
   }, []);
 
@@ -362,6 +439,14 @@ export default function App() {
       localStorage.setItem(flowerLocalStorageKey, JSON.stringify(flowers));
     }
   }, [flowers, initialized]);
+
+  useEffect(() => {
+    if (initialized) {
+      const todayString = new Date().toISOString().split("T")[0];
+      const weightData = { weight: todaysWeight, date: todayString };
+      localStorage.setItem(weightLocalStorageKey, JSON.stringify(weightData));
+    }
+  }, [todaysWeight, initialized]);
 
   const uncompletedCount = todos.filter((todo) => !todo.isDone).length;
 
@@ -442,16 +527,16 @@ export default function App() {
     setFlowers([]);
   };
 
-  // ◀◀ 追加: モーダル関連の関数
+  // モーダル関連の関数
   const handleClearRequest = () => {
-    setIsModalOpen(true); // モーダルを開く
+    setIsModalOpen(true);
   };
   const handleConfirmClear = () => {
-    clearAllFlowers(); // 実際に花を削除
-    setIsModalOpen(false); // モーダルを閉じる
+    clearAllFlowers();
+    setIsModalOpen(false);
   };
   const handleCancelClear = () => {
-    setIsModalOpen(false); // モーダルを閉じる
+    setIsModalOpen(false);
   };
 
   // --- フォーム操作 ---
@@ -473,6 +558,10 @@ export default function App() {
 
   const updateNewTodoSets = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setNewTodoSets(e.target.value);
+  };
+
+  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTodaysWeight(e.target.value);
   };
 
   const addNewTodo = () => {
@@ -499,28 +588,46 @@ export default function App() {
 
   // --- JSX ---
   return (
-    <div className="mx-auto my-10 max-w-3xl bg-zinc-50 p-6 md:p-8 rounded-2xl shadow-xl font-sans">
-      <h1 className="mb-4 text-3xl font-bold text-center text-green-800">
+    <div style={{ maxWidth: "48rem", margin: "2.5rem auto", padding: "1rem" }}>
+      <h1 style={{ textAlign: "center", fontSize: "1.875rem", fontWeight: "bold", marginBottom: "1rem" }}>
         筋トレお花畑
       </h1>
-      <div className="mb-4 text-center text-lg text-gray-700">
-        現在の未完了メニューは
-        <span className="font-bold text-2xl mx-1 text-red-500">
-          {uncompletedCount}
-        </span>
-        個です。
-      </div>
 
-      {/* ◀◀ 変更: onClearRequest を FlowerGarden に渡す */}
+      <WelcomeMessage uncompletedCount={uncompletedCount} />
+
       <FlowerGarden flowers={flowers} onClearRequest={handleClearRequest} />
 
-      <div className="mt-6 space-y-4 rounded-lg border bg-white p-5 shadow">
-        <h2 className="text-xl font-bold text-gray-800">新しいメニューの追加</h2>
+      {/* 今日の体重 */}
+      <div style={{ marginTop: "1.5rem", border: "1px solid #CCC", padding: "1.25rem" }}>
+        <label
+          htmlFor="todaysWeight"
+          style={{ display: "block", fontWeight: "bold" }}
+        >
+          今日の体重
+        </label>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <input
+            id="todaysWeight"
+            type="number"
+            value={todaysWeight}
+            onChange={handleWeightChange}
+            style={{ width: "100%", border: "1px solid #CCC", padding: "0.625rem" }}
+            placeholder="例: 65.5"
+            min="0"
+            step="0.1"
+          />
+          <span>kg</span>
+        </div>
+      </div>
+      {/* 体重ここまで */}
+
+      <div style={{ marginTop: "1.5rem", border: "1px solid #CCC", padding: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <h2>新しいメニューの追加</h2>
 
         <div>
           <label
             htmlFor="newTodoName"
-            className="block text-sm font-bold text-gray-700 mb-1"
+            style={{ display: "block", marginBottom: "0.25rem" }}
           >
             メニュー名
           </label>
@@ -529,59 +636,56 @@ export default function App() {
             type="text"
             value={newTodoName}
             onChange={updateNewTodoName}
-            className={twMerge(
-              "w-full rounded-md border p-2.5",
-              "focus:outline-none focus:ring-2 focus:ring-green-500 border-gray-300",
-              newTodoNameError &&
-                "border-red-500 ring-red-500 focus:ring-red-500"
-            )}
+            style={{ width: "100%", border: "1px solid #CCC", padding: "0.625rem" }}
             placeholder="例: 腕立て (2〜32文字)"
           />
           {newTodoNameError && (
-            <div className="mt-1 flex items-center gap-x-1 text-sm font-bold text-red-500">
-              <AlertIcon className="w-4 h-4" />
+            <div style={{ marginTop: "0.25rem", color: "red", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+              <AlertIcon style={{ width: "1rem", height: "1rem" }} />
               <div>{newTodoNameError}</div>
             </div>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1.5">
+          <label style={{ display: "block", marginBottom: "0.375rem" }}>
             単位
           </label>
-          <div className="flex w-full rounded-md bg-gray-200 p-1">
+          <div style={{ display: "flex", width: "100%", backgroundColor: "#EEE", padding: "0.25rem" }}>
             <button
               type="button"
               onClick={() => setNewTodoUnit("reps")}
-              className={twMerge(
-                "w-1/2 rounded p-1.5 text-center font-bold",
-                newTodoUnit === "reps"
-                  ? "bg-white text-green-700 shadow"
-                  : "text-gray-600"
-              )}
+              style={{
+                width: "50%",
+                padding: "0.375rem",
+                textAlign: "center",
+                backgroundColor: newTodoUnit === "reps" ? "white" : "transparent",
+                border: newTodoUnit === "reps" ? "1px solid #CCC" : "none",
+              }}
             >
               回数 (回)
             </button>
             <button
               type="button"
               onClick={() => setNewTodoUnit("seconds")}
-              className={twMerge(
-                "w-1/2 rounded p-1.5 text-center font-bold",
-                newTodoUnit === "seconds"
-                  ? "bg-white text-green-700 shadow"
-                  : "text-gray-600"
-              )}
+              style={{
+                width: "50%",
+                padding: "0.375rem",
+                textAlign: "center",
+                backgroundColor: newTodoUnit === "seconds" ? "white" : "transparent",
+                border: newTodoUnit === "seconds" ? "1px solid #CCC" : "none",
+              }}
             >
               耐久 (秒)
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem" }}>
           <div>
             <label
               htmlFor="newTodoAmount"
-              className="block text-sm font-bold text-gray-700 mb-1"
+              style={{ display: "block", marginBottom: "0.25rem" }}
             >
               {newTodoUnit === "reps" ? "回数" : "秒数"}
             </label>
@@ -590,7 +694,7 @@ export default function App() {
               type="number"
               value={newTodoAmount}
               onChange={updateNewTodoAmount}
-              className="w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-green-500"
+              style={{ width: "100%", border: "1px solid #CCC", padding: "0.625rem" }}
               placeholder={newTodoUnit === "reps" ? "例: 10" : "例: 30"}
               min="0"
               step="10"
@@ -600,7 +704,7 @@ export default function App() {
           <div>
             <label
               htmlFor="newTodoSets"
-              className="block text-sm font-bold text-gray-700 mb-1"
+              style={{ display: "block", marginBottom: "0.25rem" }}
             >
               セット数
             </label>
@@ -608,7 +712,7 @@ export default function App() {
               id="newTodoSets"
               value={newTodoSets}
               onChange={updateNewTodoSets}
-              className="w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              style={{ width: "100%", border: "1px solid #CCC", padding: "0.625rem", background: "white" }}
             >
               {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
                 <option key={num} value={num.toString()}>
@@ -623,21 +727,26 @@ export default function App() {
           type="button"
           onClick={addNewTodo}
           disabled={!!newTodoNameError || newTodoName.length === 0}
-          className={twMerge(
-            "flex w-full items-center justify-center gap-x-2 rounded-lg bg-green-600 px-3 py-3 font-bold text-white transition-colors",
-            "hover:bg-green-700",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
-            (!!newTodoNameError || newTodoName.length === 0) &&
-              "cursor-not-allowed opacity-40"
-          )}
+          style={{
+            display: "flex",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+            padding: "0.75rem",
+            color: "white",
+            backgroundColor: "#059669",
+            opacity: (!!newTodoNameError || newTodoName.length === 0) ? 0.4 : 1,
+            cursor: (!!newTodoNameError || newTodoName.length === 0) ? "not-allowed" : "pointer",
+          }}
         >
-          <PlusIcon className="w-5 h-5" />
+          <PlusIcon style={{ width: "1.25rem", height: "1.25rem" }} />
           メニューを追加
         </button>
       </div>
 
-      <div className="mt-6 space-y-2">
-        <h2 className="text-xl font-bold text-gray-800">
+      <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <h2>
           メニューリスト ({todos.length}件)
         </h2>
         <TodoList
@@ -647,59 +756,74 @@ export default function App() {
         />
       </div>
 
-      {/* ◀◀ 変更: 「お花畑をリセット」ボタンをここから削除 */}
-      <div className="mt-6 space-y-4">
-        {/* ◀◀ 変更なし: 完了済み削除ボタン */}
+      <div style={{ marginTop: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
         {todos.some((todo) => todo.isDone) && (
           <button
             type="button"
             onClick={removeCompletedTodos}
-            className={
-              "flex w-full items-center justify-center gap-x-2 rounded-lg bg-red-600 px-3 py-2.5 font-bold text-white transition-colors hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-            }
+            style={{
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              padding: "0.625rem",
+              color: "white",
+              backgroundColor: "#DC2626",
+            }}
           >
-            <TrashIcon className="w-5 h-5" />
+            <TrashIcon style={{ width: "1.25rem", height: "1.25rem" }} />
             完了済みのメニューをすべて削除
           </button>
         )}
       </div>
 
-      {/* ◀◀ 追加: 草刈り確認モーダル */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+          style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            zIndex: 50,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+          }}
           aria-labelledby="modal-title"
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm m-4">
+          <div style={{ backgroundColor: "white", padding: "1.5rem", margin: "1rem", maxWidth: "24rem", width: "100%" }}>
             <h3
-              className="text-lg font-bold text-gray-900"
               id="modal-title"
+              style={{ fontWeight: "bold" }}
             >
-              ちょっと待って！
+              草刈り確認
             </h3>
-            <div className="mt-2">
-              <p className="text-sm text-gray-600">
-                本当にお花畑をリセットする？
+            <div style={{ marginTop: "0.5rem" }}>
+              <p>
+                本当にお花畑をリセットしますか？
                 <br />
-                咲かせたマッチョ・フラワーが全部消えちゃうよ！
+                咲いているお花がすべて消えてしまいます。
               </p>
             </div>
-            <div className="mt-6 flex justify-end space-x-3">
+            <div style={{ marginTop: "1.5rem", display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
               <button
                 type="button"
                 onClick={handleCancelClear}
-                className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                style={{ padding: "0.5rem 1rem", backgroundColor: "#F3F4F6" }}
               >
                 キャンセル
               </button>
               <button
                 type="button"
                 onClick={handleConfirmClear}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                style={{ padding: "0.5rem 1rem", backgroundColor: "#DC2626", color: "white" }}
               >
-                草刈りする！
+                はい、草刈りする
               </button>
             </div>
           </div>
