@@ -2,7 +2,7 @@
 
 GitHub Pages URL:https://atvbs2b.github.io/react-todo-app/
 
-React、TypeScript、Tailwind CSS を使用し、ローカルストレージでデータを永続化したTodoアプリです。
+React、TypeScript、Tailwind CSS を使用し、ローカルストレージでデータを永続化した筋トレしたい人向けのTodoアプリです。
 日々の筋力トレーニングを管理し、達成度を「お花」として可視化することでモチベーションを維持することを目的としています。
 
 ## コンセプト
