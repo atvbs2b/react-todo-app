@@ -28,12 +28,13 @@ React、TypeScript、Tailwind CSS を使用し、ローカルストレージで�
 ## 主な機能
 
 ### トレーニングメニューの管理
-
+<img width="926" height="876" alt="image" src="https://github.com/user-attachments/assets/20ab7608-be41-4ec8-b7e4-e6e5ba036dc4" />
 - トレーニングメニューの追加（メニュー名、単位、回数/秒数、セット数）
 - メニューの完了チェック
 - メニューの個別削除、完了済みメニューの一括削除
 
 ### トレーニング・ガーデン
+<img width="1204" height="481" alt="image" src="https://github.com/user-attachments/assets/3e970850-61e2-42f1-8ab4-919f781d1a4e" />
 - メニューを1つ完了すると、お花畑のランダムな位置にランダムな色のお花が咲きます。
 - 咲くお花の数は「セット数」に応じて決まります。（1セットなら一輪、2セットなら二輪……）
 - 咲くお花のサイズは「回数」や「秒数」に応じて大きくなります。
@@ -42,6 +43,7 @@ React、TypeScript、Tailwind CSS を使用し、ローカルストレージで�
 - その日の体重を簡単にメモしておけます。
 
 ### 挨拶
+<img width="849" height="89" alt="image" src="https://github.com/user-attachments/assets/6e9213ea-5475-44e5-89b0-bd48b4a6dd47" />
 - 朝・昼・晩でホーム画面の挨拶メッセージが変化します。
 - 未完了メニュー数を表示します。
 
@@ -70,4 +72,3 @@ React、TypeScript、Tailwind CSS を使用し、ローカルストレージで�
 - 2025年10月23日：プロジェクト開始
 - 2025年11月18日：第1版完成
 - 総製作時間：約19時間
-- 
