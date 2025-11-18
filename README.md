@@ -1,31 +1,73 @@
-# TodoApp
+# 筋トレフラワーガーデン
 
-React、TypeScript、Tailwind CSS を使用し、ローカルストレージでデータを永続化した「Todoアプリ」です。
+GitHub Pages URL:https://atvbs2b.github.io/react-todo-app/
+
+React、TypeScript、Tailwind CSS を使用し、ローカルストレージでデータを永続化したTodoアプリです。
+日々の筋力トレーニングを管理し、達成度を「お花」として可視化することでモチベーションを維持することを目的としています。
+
+## コンセプト
+
+このアプリは、一般的なTodoリストの機能に「トレーニングの成果を視覚的に楽しむ」というゲーミフィケーション要素を加えています。
+
+日々の筋力トレーニングは、成果がすぐには目に見えにくいものです。私は結果が目に見えてわからないと継続することが難しい人間なので、
+「筋肉は育ちがわかりにくいからこそ、目で見てわかりやすい積み上げた成績があるといいな」という思いから、このアプリを開発しました。
+
+タスク完了が視覚的な報酬（お花）につながることで、日々の継続を楽しめるようにすることを目的としています。
+また、背景として、現在私が所属するIコースで筋トレや（健康的な）ダイエットが流行していることも、このアイデアを後押ししました。
+
+## 使い方
+
+1. 「新しいメニューの追加」から、トレーニング内容（例: 腕立て、10回、3セット）を入力し、メニューを追加します。
+
+2. トレーニングを終えたら、メニューリストで該当する項目のチェックボックスをオンにします。
+
+3. メニューを完了すると、「トレーニング・ガーデン」にあなたの頑張り（セット数や回数）に応じたお花が咲きます！
+
+メモできるだけですが、「今日の体重」も毎日記録できます。体重を毎日測る習慣を身につけるのに有効です。
+
+## 主な機能
+
+### トレーニングメニューの管理
+
+- トレーニングメニューの追加（メニュー名、単位、回数/秒数、セット数）
+- メニューの完了チェック
+- メニューの個別削除、完了済みメニューの一括削除
+
+### トレーニング・ガーデン
+- メニューを1つ完了すると、お花畑のランダムな位置にランダムな色のお花が咲きます。
+- 咲くお花の数は「セット数」に応じて決まります。（1セットなら一輪、2セットなら二輪……）
+- 咲くお花のサイズは「回数」や「秒数」に応じて大きくなります。
+- お花畑は「草刈りボタン」（ハサミのアイコン）でリセットすることも可能です。
+### 体重メモ
+- その日の体重を簡単にメモしておけます。
+
+### 挨拶
+- 朝・昼・晩でホーム画面の挨拶メッセージが変化します。
+- 未完了メニュー数を表示します。
+
+### データ永続化
+- 登録したメニュー、お花畑の状態、体重はブラウザのlocalStorageに保存され、リロードしても消えません。
+
+## 特に工夫した点
+### 1. 「トレーニング・ガーデン」による動機付け
+トレーニングの量（回数・セット数）が視覚的な報酬（お花のサイズ・数）に直結するロジックを実装した点が最大のオリジナル要素です。
+これにより、単に「やった」だけでなく「どれだけ頑張ったか」がガーデンの賑わいとして反映されます。
+
+### 2.  UI/UXの工夫
+- 単位の切り替え: トレーニング内容に合わせて「回数」と「秒数」をトグルボタンで直感的に切り替えられるようにしました。
+- 入力フォーム: メニュー名には2文字以上32文字以内という簡易なバリデーションを設け、エラーメッセージを表示するようにしました。
+- 確認モーダル: ユーザーが誤って大切に育てたお花畑をリセットしないよう、「草刈り」時には確認モーダルを表示する処理を実装しました。
+
+## 使用技術
+- フロントエンド: React, TypeScript
+- CSS: Tailwind CSS
+- ライブラリ:
+  - uuid: TodoやFlowerの一意なID生成
+  - tailwind-merge: Tailwindのクラス名を動的に結合・整理
 
 ## 開発履歴
 
 - 2025年10月23日：プロジェクト開始
-
-## ライセンス
-
-MIT License
-
-Copyright (c) 2025 Kosen Taro
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+- 2025年11月18日：第1版完成
+- 総製作時間：約19時間
+- 
