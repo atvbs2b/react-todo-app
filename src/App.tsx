@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { v4 as uuid } from "uuid";
-// twMergeは、動的にclassNameを結合するのに便利なライブラリです
 import { twMerge } from "tailwind-merge";
 
-// --- 型定義 (ここがTypeScriptの部分です) ---
+// 型定義
 type Todo = {
   id: string;
   name: string;
@@ -21,7 +20,7 @@ type Flower = {
   y: number;
 };
 
-// --- 初期データ ---
+// 初期データ
 const initTodos: Todo[] = [
   {
     id: uuid(),
@@ -57,7 +56,7 @@ const initTodos: Todo[] = [
   },
 ];
 
-// --- 挨拶コンポーネント (Propsの型定義がTypeScript) ---
+// 挨拶
 type WelcomeMessageProps = {
   uncompletedCount: number;
 };
@@ -87,7 +86,7 @@ const WelcomeMessage = ({ uncompletedCount }: WelcomeMessageProps) => {
   );
 };
 
-// --- お花畑エリア ---
+// お花畑エリア
 const FLOWER_COLORS = [
   "#F87171", // red-400
   "#FBBF24", // amber-400
@@ -119,7 +118,6 @@ type FlowerItemProps = {
   flower: Flower;
 };
 const FlowerItem = React.memo(({ flower }: FlowerItemProps) => {
-  // 座標 (x, y) やランダムな回転は、Tailwindでは表現しきれないため style属性 を使います。
   const style: React.CSSProperties = {
     left: `${flower.x}%`,
     top: `${flower.y}%`,
@@ -172,7 +170,7 @@ const FlowerGarden = React.memo(
   }
 );
 
-// --- アイコン (Propsの型定義がTypeScript) ---
+// アイコン
 const TrashIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -226,7 +224,24 @@ const ScissorsIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-// --- Todoリストエリア ---
+// 新しいアイコンを追加
+const UndoIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+    <path d="M3 3v5h5" />
+  </svg>
+);
+
+// Todoリストエリア
 const parseNumber = (text: string): number => {
   if (!text) return 1;
   const match = text.match(/(\d+)/);
@@ -333,9 +348,9 @@ const TodoList = ({ todos, updateIsDone, remove }: TodoListProps) => {
   );
 };
 
-// --- メインの App コンポーネント ---
+// メインのAppコンポーネント
 export default function App() {
-  // useState の型定義 (ここがTypeScript)
+  // useStateの型定義
   const [todos, setTodos] = useState<Todo[]>([]);
   const [flowers, setFlowers] = useState<Flower[]>([]);
   const [newTodoName, setNewTodoName] = useState("");
@@ -351,7 +366,7 @@ export default function App() {
   const flowerLocalStorageKey = "KintoreFlowerV3";
   const weightLocalStorageKey = "KintoreWeightV3";
 
-  // --- LocalStorage (初回) ---
+  // LocalStorage(初回)
   useEffect(() => {
     // Todoの復元
     try {
@@ -393,24 +408,24 @@ export default function App() {
     }
 
     setInitialized(true);
-  }, []); // [] は「最初の一回だけ実行する」という意味
+  }, []);
 
-  // --- LocalStorage (保存) ---
-  // todos が変更されるたびに実行
+  // LocalStorage(保存)
+  // todosが変更されるたびに実行
   useEffect(() => {
     if (initialized) {
       localStorage.setItem(todoLocalStorageKey, JSON.stringify(todos));
     }
   }, [todos, initialized]);
 
-  // flowers が変更されるたびに実行
+  // flowersが変更されるたびに実行
   useEffect(() => {
     if (initialized) {
       localStorage.setItem(flowerLocalStorageKey, JSON.stringify(flowers));
     }
   }, [flowers, initialized]);
 
-  // todaysWeight が変更されるたびに実行
+  // todaysWeightが変更されるたびに実行
   useEffect(() => {
     if (initialized) {
       const todayString = new Date().toISOString().split("T")[0];
@@ -421,7 +436,7 @@ export default function App() {
 
   const uncompletedCount = todos.filter((todo) => !todo.isDone).length;
 
-  // 花を追加するロジック
+  // 花を追加
   const addNewFlower = (
     amountStr: string,
     setsStr: string,
@@ -460,7 +475,7 @@ export default function App() {
     }
   };
 
-  // --- Todo操作 ---
+  // Todo操作
   const updateIsDone = (
     id: string,
     value: boolean,
@@ -493,6 +508,12 @@ export default function App() {
     setTodos(todos.filter((todo) => !todo.isDone));
   };
 
+  // 全てのチェックを外す
+  const uncheckAllTodos = () => {
+    const updatedTodos = todos.map((todo) => ({ ...todo, isDone: false }));
+    setTodos(updatedTodos);
+  };
+
   // 花をすべて削除する
   const clearAllFlowers = () => {
     setFlowers([]);
@@ -510,7 +531,7 @@ export default function App() {
     setIsModalOpen(false);
   };
 
-  // --- フォーム操作 (イベントハンドラの型定義がTypeScript) ---
+  // フォーム操作
   const isValidTodoName = (name: string): string => {
     if (name.length < 2 || name.length > 32) {
       return "2〜32文字で入力してください";
@@ -541,7 +562,6 @@ export default function App() {
       setNewTodoNameError(err);
       return;
     }
-    // newTodo に 型 'Todo' を指定 (ここがTypeScript)
     const newTodo: Todo = {
       id: uuid(),
       name: newTodoName,
@@ -558,7 +578,6 @@ export default function App() {
     setNewTodoNameError("");
   };
 
-  // --- JSX (TSX) ---
   return (
     <div className="max-w-3xl mx-auto p-4 my-10">
       <h1 className="text-center text-3xl font-bold mb-4">筋トレお花畑</h1>
@@ -703,15 +722,26 @@ export default function App() {
       </div>
 
       <div className="mt-6 flex flex-col gap-4">
+        {/* 新しいボタンを追加 */}
         {todos.some((todo) => todo.isDone) && (
-          <button
-            type="button"
-            onClick={removeCompletedTodos}
-            className="flex w-full items-center justify-center gap-2 p-2.5 text-white bg-red-600 rounded-md hover:bg-red-700"
-          >
-            <TrashIcon className="w-5 h-5" />
-            完了済みのメニューをすべて削除
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={uncheckAllTodos}
+              className="flex w-full items-center justify-center gap-2 p-2.5 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+            >
+              <UndoIcon className="w-5 h-5" />
+              チェックを全て外す (翌日用)
+            </button>
+            <button
+              type="button"
+              onClick={removeCompletedTodos}
+              className="flex w-full items-center justify-center gap-2 p-2.5 text-white bg-red-600 rounded-md hover:bg-red-700"
+            >
+              <TrashIcon className="w-5 h-5" />
+              完了済みのメニューをすべて削除
+            </button>
+          </>
         )}
       </div>
 
