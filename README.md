@@ -1,4 +1,4 @@
-# 筋トレフラワーガーデン
+# 筋トレお花畑
 
 GitHub Pages URL:https://atvbs2b.github.io/react-todo-app/
 

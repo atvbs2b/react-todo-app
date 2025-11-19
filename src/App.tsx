@@ -24,14 +24,6 @@ type Flower = {
 const initTodos: Todo[] = [
   {
     id: uuid(),
-    name: "スクワット",
-    isDone: false,
-    amount: "20回",
-    unit: "reps",
-    sets: "3セット",
-  },
-  {
-    id: uuid(),
     name: "腕立て",
     isDone: false,
     amount: "15回",
